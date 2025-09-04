@@ -13,7 +13,9 @@ export default function SignupPage() {
   });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -41,72 +43,92 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100">
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md space-y-4"
+        className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md space-y-6 border border-purple-100"
       >
-        <h1 className="text-2xl font-bold text-center">Admin Signup</h1>
+        <h1 className="text-3xl font-bold text-center text-purple-700">
+          Admin Signup
+        </h1>
+        <p className="text-center text-gray-500">
+          Create an account for managing the system
+        </p>
 
-        <div className="flex items-center border rounded-lg px-3">
-          <User className="w-5 h-5 text-gray-500 mr-2" />
+        {/* Name */}
+        <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-purple-400 transition">
+          <User className="w-5 h-5 text-purple-500 mr-2" />
           <input
             type="text"
             name="name"
-            placeholder="Name"
+            placeholder="Full Name"
             value={form.name}
             onChange={handleChange}
-            className="w-full p-2 outline-none"
+            className="w-full p-2 outline-none text-gray-700 placeholder-gray-400"
             required
           />
         </div>
 
-        <div className="flex items-center border rounded-lg px-3">
-          <Mail className="w-5 h-5 text-gray-500 mr-2" />
+        {/* Email */}
+        <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-purple-400 transition">
+          <Mail className="w-5 h-5 text-purple-500 mr-2" />
           <input
             type="email"
             name="email"
             placeholder="Email"
             value={form.email}
             onChange={handleChange}
-            className="w-full p-2 outline-none"
+            className="w-full p-2 outline-none text-gray-700 placeholder-gray-400"
             required
           />
         </div>
 
-        <div className="flex items-center border rounded-lg px-3">
-          <Lock className="w-5 h-5 text-gray-500 mr-2" />
+        {/* Password */}
+        <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-purple-400 transition">
+          <Lock className="w-5 h-5 text-purple-500 mr-2" />
           <input
             type="password"
             name="password"
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
-            className="w-full p-2 outline-none"
+            className="w-full p-2 outline-none text-gray-700 placeholder-gray-400"
             required
           />
         </div>
 
-        <div className="flex items-center border rounded-lg px-3">
-          <Shield className="w-5 h-5 text-gray-500 mr-2" />
+        {/* Role */}
+        <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-purple-400 transition">
+          <Shield className="w-5 h-5 text-purple-500 mr-2" />
           <select
             name="role"
             value={form.role}
             onChange={handleChange}
-            className="w-full p-2 outline-none bg-transparent"
+            className="w-full p-2 outline-none bg-transparent text-gray-700"
           >
             <option value="STUDENT">Student</option>
             <option value="ADMIN">Admin</option>
           </select>
         </div>
 
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+          className="w-full bg-purple-600 text-white py-3 rounded-xl font-semibold shadow-md hover:bg-purple-700 hover:shadow-lg transition-all disabled:opacity-70"
         >
           {loading ? "Creating..." : "Sign Up"}
         </button>
+
+        <p className="text-center text-sm text-gray-500">
+          Already have an account?{" "}
+          <a
+            href="/user/signin"
+            className="text-purple-600 font-semibold hover:underline cursor-pointer"
+          >
+            Sign In
+          </a>
+        </p>
       </form>
     </div>
   );

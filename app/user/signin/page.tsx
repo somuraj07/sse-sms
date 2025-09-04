@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Mail, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function SigninPage() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -29,11 +30,8 @@ export default function SigninPage() {
       if (!res.ok) throw new Error(data.error || "Signin failed");
 
       toast.success("✅ Logged in successfully!");
-
-      // Store JWT in localStorage
       localStorage.setItem("token", data.token);
 
-      // Redirect based on role
       if (data.role === "ADMIN") {
         router.push("/admin");
       } else if (data.role === "STUDENT") {
@@ -51,35 +49,40 @@ export default function SigninPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100">
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md space-y-4"
+        className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md space-y-6 border border-purple-100"
       >
-        <h1 className="text-2xl font-bold text-center">Sign In</h1>
+        <h1 className="text-3xl font-bold text-center text-purple-700">
+          Welcome Back 👋
+        </h1>
+        <p className="text-center text-gray-500">
+          Sign in to continue to your account
+        </p>
 
-        <div className="flex items-center border rounded-lg px-3">
-          <Mail className="w-5 h-5 text-gray-500 mr-2" />
+        <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-purple-400 transition">
+          <Mail className="w-5 h-5 text-purple-500 mr-2" />
           <input
             type="email"
             name="email"
             placeholder="Email"
             value={form.email}
             onChange={handleChange}
-            className="w-full p-2 outline-none"
+            className="w-full p-2 outline-none text-gray-700 placeholder-gray-400"
             required
           />
         </div>
 
-        <div className="flex items-center border rounded-lg px-3">
-          <Lock className="w-5 h-5 text-gray-500 mr-2" />
+        <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-purple-400 transition">
+          <Lock className="w-5 h-5 text-purple-500 mr-2" />
           <input
             type="password"
             name="password"
             placeholder="Password"
             value={form.password}
             onChange={handleChange}
-            className="w-full p-2 outline-none"
+            className="w-full p-2 outline-none text-gray-700 placeholder-gray-400"
             required
           />
         </div>
@@ -87,10 +90,20 @@ export default function SigninPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition"
+          className="w-full bg-purple-600 text-white py-3 rounded-xl font-semibold shadow-md hover:bg-purple-700 hover:shadow-lg transition-all disabled:opacity-70"
         >
           {loading ? "Signing In..." : "Sign In"}
         </button>
+
+        <p className="text-center text-sm text-gray-500">
+          Don’t have an account?{" "}
+          <Link
+            href="/user/signup"
+            className="text-purple-600 font-semibold hover:underline cursor-pointer"
+          >
+            Sign Up
+          </Link>
+        </p>
       </form>
     </div>
   );

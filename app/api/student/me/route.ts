@@ -1,4 +1,3 @@
-// app/api/student/me/route.ts
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/db";
@@ -17,7 +16,17 @@ export async function GET(req: Request) {
 
     const student = await prisma.user.findUnique({
       where: { id: decoded.id },
-      include: { complaintsAsStudent: { orderBy: { createdAt: "desc" } } },
+      include: {
+        complaintsAsStudent: {
+          orderBy: { createdAt: "desc" }, // ✅ order works here
+          select: {
+            id: true,
+            photo: true,
+            reason: true,
+            createdAt: true,
+          },
+        },
+      },
     });
 
     if (!student) {
