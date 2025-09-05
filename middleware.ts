@@ -4,24 +4,24 @@ import type { NextRequest } from "next/server";
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Public routes (no signin required)
+  // 👇 Allow public routes (signin, static assets, etc.)
   if (pathname.startsWith("/user/signin") || pathname.startsWith("/public")) {
     return NextResponse.next();
   }
 
-  // Check for token (from localStorage or cookies – here assuming cookie)
+  // 👇 Get token from cookie
   const token = req.cookies.get("token")?.value;
 
   if (!token) {
-    // If no token → redirect to signin
+    // ❌ No token → force signin
     return NextResponse.redirect(new URL("/user/signin", req.url));
   }
 
-  // ✅ Allow
+  // ✅ Token exists → allow
   return NextResponse.next();
 }
 
-// Apply middleware to protected routes only
+// 👇 Apply middleware only to /admin/*
 export const config = {
-  matcher: ["/admin/:path*", "/student/:path*", "/users/:path*"],
+  matcher: ["/admin/:path*"],
 };

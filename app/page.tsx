@@ -1,11 +1,5 @@
-import Image from "next/image";
-import SigninPage from "./user/signin/page";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-   <div>
-    <SigninPage />
-    
-   </div>
-  );
+  redirect("/user/signin");
 }
