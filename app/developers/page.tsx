@@ -9,7 +9,7 @@ const developers = [
     name: "Pranavi Reddy ",
     rollNo: "22KF1A0596",
     domain: "Fullstack Developer",
-    photo: "/developers/pranavai.jpeg",
+    photo: "/developers/p.jpeg",
   },
   {
     name: "N. Manikanta ",
