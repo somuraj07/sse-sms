@@ -1,3 +1,4 @@
+// app/api/student/me/route.ts
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/db";
@@ -12,13 +13,19 @@ export async function GET(req: Request) {
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+
+    let decoded: { id: string };
+    try {
+      decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+    } catch {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
 
     const student = await prisma.user.findUnique({
       where: { id: decoded.id },
       include: {
         complaintsAsStudent: {
-          orderBy: { createdAt: "desc" }, // ✅ order works here
+          orderBy: { createdAt: "desc" },
           select: {
             id: true,
             photo: true,
@@ -36,9 +43,6 @@ export async function GET(req: Request) {
     return NextResponse.json(student);
   } catch (err) {
     console.error("❌ Error fetching student:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch student" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch student" }, { status: 500 });
   }
 }

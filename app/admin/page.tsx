@@ -2,10 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { QrCode } from "lucide-react";
-import { QrReader } from "react-qr-reader";
+import { QrCode, X, RefreshCw } from "lucide-react";
 import Webcam from "react-webcam";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
+// ✅ Dynamically import QR Scanner (fixes SSR issues)
+const QrScanner = dynamic(() => import("react-qr-barcode-scanner"), { ssr: false });
 
 const DEFAULT_PHOTO = "https://via.placeholder.com/150.png?text=No+Photo";
 
@@ -18,20 +21,23 @@ export default function AdminPage() {
   const [scanning, setScanning] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [otherReason, setOtherReason] = useState("");
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
+  const [qrFacingMode, setQrFacingMode] = useState<"user" | "environment">("environment");
 
   const webcamRef = useRef<Webcam>(null);
-   const Router = useRouter();
+  const Router = useRouter();
+
+  // ✅ Fetch students
   useEffect(() => {
     fetch("/api/admin/students", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-      },
+      headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
     })
       .then((res) => res.json())
       .then((data) => setStudents(data))
       .catch(() => toast.error("Failed to fetch students"));
   }, []);
 
+  // ✅ Manual search
   const handleManualSearch = () => {
     const student = students.find((s) => s.email === manualEmail);
     if (student) {
@@ -42,19 +48,20 @@ export default function AdminPage() {
     }
   };
 
-  const handleQRScan = (data: any) => {
-    if (data?.text) {
-      const student = students.find((s) => s.email === data.text);
-      if (student) {
-        setSelectedStudent(student);
-        toast.success(`Student found: ${student.name}`);
-        setScanning(false);
-      } else {
-        toast.error("No student found for scanned QR");
-      }
+  // ✅ QR Scan handler
+  const handleQRScan = (data: string) => {
+    if (!data) return;
+    const student = students.find((s) => s.email === data);
+    if (student) {
+      setSelectedStudent(student);
+      toast.success(`Student found: ${student.name}`);
+      setScanning(false);
+    } else {
+      toast.error("No student found for scanned QR");
     }
   };
 
+  // ✅ Capture photo
   const handleCapture = () => {
     const screenshot = webcamRef.current?.getScreenshot();
     if (screenshot) {
@@ -64,10 +71,10 @@ export default function AdminPage() {
     }
   };
 
+  // ✅ Submit complaint
   const submitComplaint = async () => {
     if (!selectedStudent) return toast.error("Select a student first");
-
-    const finalReason = reason === "other" ? otherReason : reason; // ✅ Fix here
+    const finalReason = reason === "other" ? otherReason : reason;
 
     if (reason === "other" && !otherReason.trim()) {
       return toast.error("Please enter a reason");
@@ -82,7 +89,7 @@ export default function AdminPage() {
         },
         body: JSON.stringify({
           studentId: selectedStudent.id,
-          reason: finalReason, // ✅ use finalReason
+          reason: finalReason,
           photo: photo || DEFAULT_PHOTO,
         }),
       });
@@ -93,10 +100,7 @@ export default function AdminPage() {
         const newComplaint = await res.json();
         setSelectedStudent((prev: any) => ({
           ...prev,
-          complaintsAsStudent: [
-            newComplaint,
-            ...(prev.complaintsAsStudent || []),
-          ],
+          complaintsAsStudent: [newComplaint, ...(prev.complaintsAsStudent || [])],
         }));
       } else {
         toast.error("Error submitting complaint ❌");
@@ -106,20 +110,9 @@ export default function AdminPage() {
     }
   };
 
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(undefined, {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
-      {/* ✅ Floating Details Button */}
+      {/* Floating Details Button */}
       <button
         onClick={() => Router.push("/users")}
         className="fixed top-4 right-4 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow z-50 text-sm sm:text-base"
@@ -131,7 +124,7 @@ export default function AdminPage() {
         <h1 className="text-2xl sm:text-3xl font-bold text-purple-700 text-center">
           Admin Dashboard
         </h1>
-         
+
         {/* Manual Search */}
         <div className="rounded-xl border p-4 bg-white shadow-sm">
           <h2 className="font-semibold text-purple-700 mb-2 text-sm sm:text-base">
@@ -168,35 +161,42 @@ export default function AdminPage() {
             </button>
           ) : (
             <div className="relative">
-              <div className="w-full h-52 sm:h-56 border rounded-lg overflow-hidden">
-                <QrReader
-                  onResult={(result, error) => {
-                    if (result) handleQRScan({ text: result.getText() });
-                    if (error) console.error(error);
+              <div className="w-full h-56 border rounded-lg overflow-hidden">
+                <QrScanner
+                  onUpdate={(err, result) => {
+                    if (result) handleQRScan(result.getText());
                   }}
-                  constraints={{ facingMode: "environment" }}
-                  className="w-full h-full"
+                  constraints={{ facingMode: qrFacingMode }}
+                  style={{ width: "100%", height: "100%" }}
                 />
               </div>
-              <button
-                onClick={() => setScanning(false)}
-                className="absolute top-2 right-2 px-2 py-1 bg-red-600 text-white rounded-md text-xs sm:text-sm"
-              >
-                Close
-              </button>
+              <div className="absolute top-2 right-2 flex gap-2">
+                <button
+                  onClick={() =>
+                    setQrFacingMode((prev) => (prev === "user" ? "environment" : "user"))
+                  }
+                  className="p-2 bg-yellow-500 rounded-full text-white"
+                >
+                  <RefreshCw size={18} />
+                </button>
+                <button
+                  onClick={() => setScanning(false)}
+                  className="p-2 bg-red-600 rounded-full text-white"
+                >
+                  <X size={18} />
+                </button>
+              </div>
             </div>
           )}
         </div>
 
-        {/* Selected Student */}
+        {/* Selected Student + Complaint Form */}
         {selectedStudent && (
           <div className="rounded-xl border p-4 sm:p-6 bg-white shadow-lg space-y-6">
             <h2 className="font-semibold text-purple-700">Selected Student</h2>
             <div>
               <p className="text-sm font-medium">👤 {selectedStudent.name}</p>
-              <p className="text-sm text-gray-600">
-                📧 {selectedStudent.email}
-              </p>
+              <p className="text-sm text-gray-600">📧 {selectedStudent.email}</p>
             </div>
 
             {/* Complaint Form */}
@@ -226,13 +226,22 @@ export default function AdminPage() {
                   </>
                 ) : showCamera ? (
                   <div className="space-y-2">
-                    <div className="overflow-hidden rounded-full w-28 h-28 sm:w-32 sm:h-32 mx-auto border-4 border-[#f9843d]">
+                    <div className="relative overflow-hidden w-28 h-28 sm:w-32 sm:h-32 mx-auto border-4 border-[#f9843d]">
                       <Webcam
                         ref={webcamRef}
                         screenshotFormat="image/jpeg"
                         className="w-full h-full object-cover"
-                        videoConstraints={{ facingMode: "user" }}
+                        videoConstraints={{ facingMode }}
                       />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFacingMode((prev) => (prev === "user" ? "environment" : "user"))
+                        }
+                        className="absolute top-1 right-1 bg-purple-600 p-1 rounded-full text-white"
+                      >
+                        <RefreshCw size={16} />
+                      </button>
                     </div>
                     <button
                       type="button"

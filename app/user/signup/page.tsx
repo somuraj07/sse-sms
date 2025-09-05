@@ -12,7 +12,6 @@ export default function SignupPage() {
     role: "STUDENT",
   });
   const [loading, setLoading] = useState(false);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -35,6 +34,7 @@ export default function SignupPage() {
 
       toast.success("✅ User created successfully!");
       setForm({ name: "", email: "", password: "", role: "STUDENT" });
+   
     } catch (err: any) {
       toast.error("❌ " + err.message);
     } finally {

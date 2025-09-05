@@ -10,36 +10,31 @@ export default function StudentPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setLoading(false);
+      // 🚨 Redirect immediately if no token
+      window.location.replace("/user/signin");
       return;
     }
 
     fetch("/api/student/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json())
-      .then((data) => {
+      .then(async (res) => {
+        if (res.status === 401) {
+          // 🚨 Invalid/expired token → clear and redirect
+          localStorage.removeItem("token");
+          window.location.replace("/user/signin");
+          return;
+        }
+        if (!res.ok) throw new Error("Failed to fetch student");
+        const data = await res.json();
         setStudent(data);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error("Error fetching student:", err);
-        setLoading(false);
+      .catch(() => {
+        localStorage.removeItem("token");
+        window.location.replace("/user/signin");
       });
   }, []);
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(undefined, {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   if (loading) {
     return (
@@ -49,13 +44,7 @@ export default function StudentPage() {
     );
   }
 
-  if (!student) {
-    return (
-      <div className="flex items-center justify-center h-screen text-red-500">
-        Failed to load student data ❌
-      </div>
-    );
-  }
+  if (!student) return null; // avoids flicker if redirecting
 
   return (
     <div className="min-h-screen bg-purple-50 flex flex-col items-center p-4">
@@ -97,11 +86,8 @@ export default function StudentPage() {
                   )}
                   <div className="flex flex-col">
                     <p className="font-medium text-black text-sm">{c.reason}</p>
-                    {c.details && (
-                      <p className="text-gray-800 text-xs">{c.details}</p>
-                    )}
                     <p className="text-gray-500 text-xs mt-1">
-                      {formatDate(c.createdAt)}
+                      {new Date(c.createdAt).toLocaleString()}
                     </p>
                   </div>
                 </div>

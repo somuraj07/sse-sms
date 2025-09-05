@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "Sanskrithi Group of Institutions",
   description: "Developed by Sanskrithi Group of Institutions",
   icons: {
-    icon: "/Icon-03.png", 
+    icon: "/Icon-03.png",
   },
 };
 
@@ -31,6 +31,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+        suppressHydrationWarning
+
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Navbar />
