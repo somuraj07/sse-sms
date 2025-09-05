@@ -7,8 +7,8 @@ import Webcam from "react-webcam";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
-// ✅ Dynamically import QR Scanner (fixes SSR issues)
-const QrScanner = dynamic(() => import("react-qr-barcode-scanner"), { ssr: false });
+// ✅ Dynamically import QR Reader to avoid SSR crash
+const QrReader = dynamic(() => import("react-qr-reader"), { ssr: false });
 
 const DEFAULT_PHOTO = "https://via.placeholder.com/150.png?text=No+Photo";
 
@@ -25,7 +25,7 @@ export default function AdminPage() {
   const [qrFacingMode, setQrFacingMode] = useState<"user" | "environment">("environment");
 
   const webcamRef = useRef<Webcam>(null);
-  const Router = useRouter();
+  const router = useRouter();
 
   // ✅ Fetch students
   useEffect(() => {
@@ -49,16 +49,22 @@ export default function AdminPage() {
   };
 
   // ✅ QR Scan handler
-  const handleQRScan = (data: string) => {
-    if (!data) return;
-    const student = students.find((s) => s.email === data);
-    if (student) {
-      setSelectedStudent(student);
-      toast.success(`Student found: ${student.name}`);
-      setScanning(false);
-    } else {
-      toast.error("No student found for scanned QR");
+  const handleScan = (data: string | null) => {
+    if (data) {
+      const student = students.find((s) => s.email === data);
+      if (student) {
+        setSelectedStudent(student);
+        toast.success(`Student found: ${student.name}`);
+        setScanning(false);
+      } else {
+        toast.error("No student found for scanned QR");
+      }
     }
+  };
+
+  const handleError = (err: any) => {
+    console.error(err);
+    toast.error("Camera access error ❌");
   };
 
   // ✅ Capture photo
@@ -114,7 +120,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       {/* Floating Details Button */}
       <button
-        onClick={() => Router.push("/users")}
+        onClick={() => router.push("/users")}
         className="fixed top-4 right-4 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow z-50 text-sm sm:text-base"
       >
         Details
@@ -157,17 +163,17 @@ export default function AdminPage() {
               onClick={() => setScanning(true)}
               className="flex items-center justify-center w-full px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 gap-2 text-sm"
             >
-              <QrCode size={18} /> Start Scanning
+              <QrCode size={20} /> Start Scanning
             </button>
           ) : (
             <div className="relative">
-              <div className="w-full h-56 border rounded-lg overflow-hidden">
-                <QrScanner
-                  onUpdate={(err, result) => {
-                    if (result) handleQRScan(result.getText());
-                  }}
-                  constraints={{ facingMode: qrFacingMode }}
+              <div className="w-full h-100 border rounded-lg overflow-hidden">
+                <QrReader
+                  delay={300}
+                  onError={handleError}
+                  onScan={handleScan}
                   style={{ width: "100%", height: "100%" }}
+                  facingMode={qrFacingMode}
                 />
               </div>
               <div className="absolute top-2 right-2 flex gap-2">
@@ -236,7 +242,9 @@ export default function AdminPage() {
                       <button
                         type="button"
                         onClick={() =>
-                          setFacingMode((prev) => (prev === "user" ? "environment" : "user"))
+                          setFacingMode((prev) =>
+                            prev === "user" ? "environment" : "user"
+                          )
                         }
                         className="absolute top-1 right-1 bg-purple-600 p-1 rounded-full text-white"
                       >
