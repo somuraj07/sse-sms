@@ -169,7 +169,7 @@ export default function AdminPage() {
             <div className="relative">
               <div className="w-full h-100 border rounded-lg overflow-hidden">
                 <QrReader
-                  delay={300}
+                  delay={100}
                   onError={handleError}
                   onScan={handleScan}
                   style={{ width: "100%", height: "100%" }}
