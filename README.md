@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📌 SSE-SMS (Smart Student Entry - SMS System)
 
-## Getting Started
+A role-based complaint management system built with **Next.js, TypeScript, React, PostgreSQL, and Prisma**.  
+This project is designed for **tracking latecomers, shoe/beard violations, and other hostel/student-related issues**.  
+Each student has a **unique QR code** (printed on their ID card). By scanning this QR code, admins can instantly fetch the student’s details and raise complaints.  
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🎥 Demo / Animation UI
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<p align="center">
+  <!-- Replace with your actual GIF/screenshots -->
+  <img src="./assets/demo-animation.gif" alt="SSE-SMS Demo Animation" width="600"/>
+</p>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Features
 
-## Learn More
+- 🔐 **Authentication & Authorization**  
+  - Signup & Signin with **role-based access** (Admin, Student).  
+  - Protected routes based on user roles.  
 
-To learn more about Next.js, take a look at the following resources:
+- 🎫 **Unique QR Codes**  
+  - Each student gets a QR code linked to their profile.  
+  - QR scan fetches real-time student details.  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 📋 **Complaint System**  
+  - Admins can raise complaints (latecomers, beard, shoes, etc.).  
+  - Complaints linked directly to student profiles.  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 📊 **Student Profiles**  
+  - Store and retrieve complete student information.  
+  - Complaints history tracking.  
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠️ Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Frontend**: [Next.js](https://nextjs.org/), [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/)  
+- **Backend**: API Routes in Next.js  
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Prisma ORM](https://www.prisma.io/)  
+- **Authentication**: JWT / Role-based Access Control  
+- **QR Code**: QR generation & scanning for student identificatio
