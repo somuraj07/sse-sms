@@ -4,17 +4,6 @@ A role-based complaint management system built with **Next.js, TypeScript, React
 This project is designed for **tracking latecomers, shoe/beard violations, and other hostel/student-related issues**.  
 Each student has a **unique QR code** (printed on their ID card). By scanning this QR code, admins can instantly fetch the student’s details and raise complaints.  
 
----
-
-## 🎥 Demo / Animation UI
-
-<p align="center">
-  <!-- Replace with your actual GIF/screenshots -->
-  <img src="./assets/demo-animation.gif" alt="SSE-SMS Demo Animation" width="600"/>
-</p>
-
----
-
 ## 🚀 Features
 
 - 🔐 **Authentication & Authorization**  
@@ -41,4 +30,4 @@ Each student has a **unique QR code** (printed on their ID card). By scanning th
 - **Backend**: API Routes in Next.js  
 - **Database**: [PostgreSQL](https://www.postgresql.org/) with [Prisma ORM](https://www.prisma.io/)  
 - **Authentication**: JWT / Role-based Access Control  
-- **QR Code**: QR generation & scanning for student identificatio
+- **QR Code**: QR generation & scanning for student identification
