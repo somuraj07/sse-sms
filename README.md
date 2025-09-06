@@ -1,5 +1,4 @@
-# 📌 SSE-SMS (Smart Student Entry - SMS System)
-
+# 📌 SSE-SMS 
 A role-based complaint management system built with **Next.js, TypeScript, React, PostgreSQL, and Prisma**.  
 This project is designed for **tracking latecomers, shoe/beard violations, and other hostel/student-related issues**.  
 Each student has a **unique QR code** (printed on their ID card). By scanning this QR code, admins can instantly fetch the student’s details and raise complaints.  
