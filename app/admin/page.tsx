@@ -109,7 +109,7 @@ export default function AdminPage() {
           complaintsAsStudent: [newComplaint, ...(prev.complaintsAsStudent || [])],
         }));
       } else {
-        toast.error("Error submitting complaint ❌");
+        toast.error("Error submitting complaint please contact principal ❌");
       }
     } catch {
       toast.error("Network error ❌");

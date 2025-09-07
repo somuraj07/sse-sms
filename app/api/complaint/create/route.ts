@@ -4,11 +4,20 @@ import { prisma } from "@/lib/db";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { studentId, reason, details, photo } = body;
+    const { studentId, reason, photo } = body;
 
     if (!studentId || !reason) {
       return NextResponse.json(
         { error: "studentId and reason are required" },
+        { status: 400 }
+      );
+    }
+     const existingCount = await prisma.complaint.count({
+      where: { studentId },
+    });
+    if (existingCount >= 5) {
+      return NextResponse.json(
+        { message: "You have reached max complaints pealse contact to prrincipal." },
         { status: 400 }
       );
     }
