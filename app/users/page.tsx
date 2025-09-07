@@ -30,6 +30,11 @@ export default function AdminUsersPage() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.replace("/user/signin");
+      return;
+    }
     fetch(`/api/admin/users?email=${search}`)
       .then((res) => res.json())
       .then((data) => setUsers(data))

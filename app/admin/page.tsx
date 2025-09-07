@@ -29,6 +29,11 @@ export default function AdminPage() {
 
   // ✅ Fetch students
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.replace("/user/signin");
+      return;
+    }
     fetch("/api/admin/students", {
       headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` },
     })
