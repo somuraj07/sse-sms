@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const students = await prisma.user.findMany({
       where: { role: "STUDENT" },
-      select: { id: true, name: true, email: true },
+      select: { id: true, name: true, email: true ,department:true},
     });
     return NextResponse.json(students);
   } catch (error) {

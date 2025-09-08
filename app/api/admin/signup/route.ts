@@ -7,8 +7,8 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request){
     try {
         const body = await request.json();
-        const {email, password,role,name} = body;
-        if(!name || !email || !password || !role){
+        const {email, password,role,name,department} = body;
+        if(!name || !email || !password || !role|| !department){
             return NextResponse.json({message: 'All fields are required'}, {status: 400})
         }
         const existing = await prisma.user.findUnique({
@@ -23,6 +23,7 @@ export async function POST(request: Request){
                 name,
                 email,
                 role,
+                department,
                 password: hassedPassword
             }
         });

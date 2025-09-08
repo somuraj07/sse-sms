@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { User, Mail, Lock, Shield } from "lucide-react";
+import { User, Mail, Lock, Shield, Building2 } from "lucide-react";
 
 export default function SignupPage() {
   const [form, setForm] = useState({
@@ -10,8 +10,10 @@ export default function SignupPage() {
     email: "",
     password: "",
     role: "STUDENT",
+    department: "",
   });
   const [loading, setLoading] = useState(false);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -33,8 +35,13 @@ export default function SignupPage() {
       if (!res.ok) throw new Error(data.error || "Signup failed");
 
       toast.success("✅ User created successfully!");
-      setForm({ name: "", email: "", password: "", role: "STUDENT" });
-   
+      setForm({
+        name: "",
+        email: "",
+        password: "",
+        role: "STUDENT",
+        department: "",
+      });
     } catch (err: any) {
       toast.error("❌ " + err.message);
     } finally {
@@ -96,6 +103,26 @@ export default function SignupPage() {
             required
           />
         </div>
+
+        {/* Department */}
+        <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-purple-400 transition">
+          <Building2 className="w-5 h-5 text-purple-500 mr-2" />
+          <select
+            name="department"
+            value={form.department}
+            onChange={handleChange}
+            className="w-full p-2 outline-none bg-transparent text-gray-700"
+            required
+          >
+            <option value="">Dept</option>
+            <option value="CSE">CSE</option>
+            <option value="ECE">ECE</option>
+            <option value="EEE">EEE</option>
+            <option value="MECH">MECH</option>
+            <option value="CIVIL">CIVIL</option>
+          </select>
+        </div>
+
 
         {/* Role */}
         <div className="flex items-center border rounded-lg px-3 py-2 focus-within:ring-2 focus-within:ring-purple-400 transition">

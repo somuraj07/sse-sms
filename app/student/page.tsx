@@ -55,6 +55,7 @@ export default function StudentPage() {
             Welcome, {student.name}
           </h1>
           <p className="text-gray-700 mt-1">{student.email}</p>
+          <p className="text-gray-700 mt-1">Department: {student.department}</p>
         </div>
 
         {/* QR Code */}

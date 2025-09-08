@@ -208,6 +208,7 @@ export default function AdminPage() {
             <div>
               <p className="text-sm font-medium">👤 {selectedStudent.name}</p>
               <p className="text-sm text-gray-600">📧 {selectedStudent.email}</p>
+              <p className="text-sm text-gray-600">🏫 {selectedStudent.department}</p>
             </div>
 
             {/* Complaint Form */}
@@ -282,9 +283,10 @@ export default function AdminPage() {
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                 >
-                  <option value="beard">Beard</option>
-                  <option value="shoes">Shoes</option>
-                  <option value="late">Late Arrival</option>
+                  <option value="Beard">Beard</option>
+                  <option value="Shoes">Shoes</option>
+                  <option value="Late">Late Arrival</option>
+                  <option value="Dress-Code">Dress Code</option>
                   <option value="other">Other</option>
                 </select>
 
