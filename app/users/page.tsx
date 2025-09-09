@@ -54,15 +54,37 @@ export default function AdminUsersPage() {
       .catch((err) => console.error("Error:", err));
   }, [search]);
 
-  // Date range check helper
+  // ✅ Date range check helper
   const isInRange = (dateStr: string) => {
-    if (!startDate && !endDate) return true;
     const d = new Date(dateStr);
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
-    if (start && d < start) return false;
-    if (end && d > end) return false;
-    return true;
+
+    // No filter → allow all
+    if (!startDate && !endDate) return true;
+
+    // If only startDate selected → exact day match
+    if (startDate && !endDate) {
+      const start = new Date(startDate);
+      return (
+        d.getFullYear() === start.getFullYear() &&
+        d.getMonth() === start.getMonth() &&
+        d.getDate() === start.getDate()
+      );
+    }
+
+    // If only endDate selected → exact day match
+    if (!startDate && endDate) {
+      const end = new Date(endDate);
+      return (
+        d.getFullYear() === end.getFullYear() &&
+        d.getMonth() === end.getMonth() &&
+        d.getDate() === end.getDate()
+      );
+    }
+
+    // If both selected → check range
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return d >= start && d <= end;
   };
 
   // Filtered users
@@ -79,7 +101,7 @@ export default function AdminUsersPage() {
     return ok;
   });
 
-  // Complaint stats grouped by date
+  // Complaints per Day chart data
   const complaintStats = filteredUsers
     .flatMap((u) => u.complaintsAsStudent)
     .filter((c) => isInRange(c.createdAt))
@@ -94,7 +116,7 @@ export default function AdminUsersPage() {
     count,
   }));
 
-  // Stats grouped by reason
+  // Complaints by reason
   const reasonStats = filteredUsers
     .flatMap((u) => u.complaintsAsStudent)
     .filter((c) => isInRange(c.createdAt))
@@ -117,12 +139,12 @@ export default function AdminUsersPage() {
         SSE – Admin Dashboard
       </h1>
 
-      {/* Filters Section - Mobile Friendly */}
+      {/* Filters */}
       <div className="flex gap-2 overflow-x-auto pb-2 snap-x">
         {/* Search */}
         <input
           type="text"
-          placeholder="🔍 Email..."
+          placeholder="🔍 Roll No..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-shrink-0 w-44 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 snap-start"
@@ -156,7 +178,7 @@ export default function AdminUsersPage() {
           <option value="Others">Others</option>
         </select>
 
-        {/* Date Range filter */}
+        {/* Date filters */}
         <input
           type="date"
           value={startDate}
